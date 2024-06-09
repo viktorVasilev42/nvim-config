@@ -21,7 +21,7 @@ features:
 - kanagawa colorscheme
 - code snippets (configured in snippets directory)
 - airline (of course)
-- nerdtree (toggle on: <C-f>)
+- nerdtree (toggle on: C-f)
 - multiline insert (using vim-visual-multi)
 
 :blush: forbidden: blue backgrounds. :blush:
