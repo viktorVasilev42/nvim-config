@@ -21,8 +21,16 @@ features:
 - kanagawa colorscheme
 - code snippets (configured in snippets directory)
 - airline (of course)
-- nerdtree (toggle on: <C-f>)
+- nerdtree (toggle on: C-f)
 - multiline insert (using vim-visual-multi)
 
-:blush: forbidden: any background other than black :blush:
+:blush: forbidden: blue backgrounds. :blush:
 
+screenshot 1:
+![](screenshots/nvim-1.png)
+
+screenshot 2:
+![](screenshots/nvim-2.png)
+
+screenshot 3:
+![](screenshots/nvim-3.png)
