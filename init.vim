@@ -11,6 +11,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'windwp/nvim-autopairs'
 Plug 'https://github.com/windwp/nvim-ts-autotag'
 Plug 'https://github.com/rebelot/kanagawa.nvim'
+Plug 'https://github.com/rose-pine/neovim'
 
 " nvim-comp
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -28,6 +29,8 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
 Plug 'https://github.com/mfussenegger/nvim-lint'
+Plug 'https://github.com/lewis6991/gitsigns.nvim'
+Plug 'https://github.com/tpope/vim-fugitive'
 
 call plug#end()
 
@@ -87,6 +90,7 @@ nnoremap <silent> ca <cmd>lua vim.lsp.buf.code_action()<CR>
 
 let g:NERDTreeDirArrowExpandable = ' '
 let g:NERDTreeDirArrowCollapsible = ' '
+let g:NERDTreeShowHidden = 1
 
 "" Highlighting
 let g:WebDevIconsDefaultFolderSymbolColor = "EE6E73"
@@ -138,13 +142,15 @@ require('kanagawa').setup({
     },
 })
 vim.cmd("colorscheme kanagawa");
+vim.cmd(":highlight MatchParen cterm=underline ctermbg=black ctermfg=NONE")
+vim.cmd(":highlight MatchParen gui=underline guibg=black guifg=NONE")
 
 require('mason').setup();
 
 -- TreeSitter Settings
 
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "java", "lua", "python", "html", "javascript", "typescript"},
+  ensure_installed = { "java", "lua", "python", "html", "javascript", "typescript", "cpp"},
 
   sync_install = false,
 
@@ -153,6 +159,10 @@ require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
   },
+
+  indent = {
+    enable = false    
+  }
 }
 
 require("nvim-autopairs").setup {}
@@ -177,7 +187,6 @@ require("nvim-autopairs").setup {}
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
       ['<C-Space>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.abort(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
       ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     }),
     sources = cmp.config.sources({
@@ -232,9 +241,8 @@ require("nvim-autopairs").setup {}
       filetypes = {"html",}
   }
   require("lspconfig").tsserver.setup{
-    capabilities = capabilities;
-    filetypes = {"typescript"};
   }
+  require("lspconfig").clangd.setup{}
 
   -- nvim-lint setup
   require('lint').linters_by_ft = {
@@ -255,4 +263,6 @@ require("nvim-autopairs").setup {}
         enable_close_on_slash = false -- Auto close on trailing </
       },
     })
+
+    require("gitsigns").setup()
 EOF
