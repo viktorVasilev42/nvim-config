@@ -24,7 +24,7 @@ Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.6' }
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
 Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
@@ -51,7 +51,7 @@ set expandtab
 set smartindent
 set smarttab
 
-let g:airline_theme="deus"
+let g:airline_theme="murmur"
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
@@ -85,6 +85,7 @@ nnoremap crc <Cmd>lua require('jdtls').extract_constant()<CR>
 vnoremap crc <Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>
 vnoremap crm <Esc><Cmd>lua require('jdtls').extract_method(true)<CR>
 nnoremap <silent> ca <cmd>lua vim.lsp.buf.code_action()<CR> 
+nnoremap <silent> ty <cmd>lua vim.lsp.buf.hover()<CR>
 
 " NERDTree Settings
 
@@ -150,7 +151,7 @@ require('mason').setup();
 -- TreeSitter Settings
 
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "java", "lua", "python", "html", "javascript", "typescript", "cpp"},
+  ensure_installed = { "java", "lua", "python", "html", "javascript", "typescript", "cpp", "css"},
 
   sync_install = false,
 
@@ -240,9 +241,11 @@ require("nvim-autopairs").setup {}
       capabilities = capabilities;
       filetypes = {"html",}
   }
+  require("lspconfig").css.setup{}
   require("lspconfig").tsserver.setup{
   }
   require("lspconfig").clangd.setup{}
+  require("lspconfig").eslint.setup{}
 
   -- nvim-lint setup
   require('lint').linters_by_ft = {
