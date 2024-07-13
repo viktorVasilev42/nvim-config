@@ -241,7 +241,7 @@ require("nvim-autopairs").setup {}
       capabilities = capabilities;
       filetypes = {"html",}
   }
-  require("lspconfig").css.setup{}
+  require("lspconfig").cssls.setup{}
   require("lspconfig").tsserver.setup{
   }
   require("lspconfig").clangd.setup{}
