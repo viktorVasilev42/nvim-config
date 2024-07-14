@@ -56,7 +56,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
-let g:vsnip_snippet_dir = "C:/Users/viktor/AppData/Local/nvim/snippets"
+let g:vsnip_snippet_dir = "/home/viktor/.config/nvim/snippets/"
 
 nnoremap <leader>e :lua vim.diagnostic.open_float(nil, { scope = "line" })<CR>
 
