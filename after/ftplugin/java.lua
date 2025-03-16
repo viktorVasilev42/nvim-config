@@ -25,7 +25,11 @@ end
 
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 local workspace_dir = vim.fn.stdpath('data') .. '/site/java/workspace-root/' .. project_name
-os.execute("mkdir " .. workspace_dir)
+local ok, err = os.execute("mkdir -p " .. workspace_dir)
+if not ok then
+    vim.notify("Failed to create workspace dir: " .. err, vim.log.levels.ERROR);
+    return
+end
 
 -- Main Config
 local config = {

@@ -3,15 +3,13 @@ call plug#begin()
 Plug 'https://github.com/vim-airline/vim-airline'
 Plug 'https://github.com/vim-airline/vim-airline-themes'
 Plug 'https://github.com/preservim/nerdtree'
-Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'mfussenegger/nvim-jdtls'
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'windwp/nvim-autopairs'
 Plug 'https://github.com/windwp/nvim-ts-autotag'
-Plug 'https://github.com/rebelot/kanagawa.nvim'
-Plug 'https://github.com/rose-pine/neovim'
+Plug 'EdenEast/nightfox.nvim'
 
 " nvim-comp
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -51,10 +49,26 @@ set expandtab
 set smartindent
 set smarttab
 
-let g:airline_theme="murmur"
+" let g:airline_theme="distinguished"
+let g:airline_theme="viksa"
 let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#left_sep = ''
+" let g:airline#extensions#tabline#left_alt_sep = ''
+" let g:airline#extensions#tabline#right_sep = ''
+" let g:airline#extensions#tabline#right_alt_sep = ''
+let g:airline#extensions#tabline#buffers_label = ''
+
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+let g:airline_section_c = ''
+let g:airline_section_x = ''
+let g:airline_section_y = '%{&fileencoding}'
+let g:airline_section_z = '%l/%L %c'
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#hunks#enabled = 0
+let g:webdevicons_enable_airline_statusline = 0
+let g:webdevicons_enable_airline_tabline = 0
 
 let g:vsnip_snippet_dir = "/home/viktor/.config/nvim/snippets/"
 
@@ -84,8 +98,8 @@ vnoremap crv <Esc><Cmd>lua require('jdtls').extract_variable(true)<CR>
 nnoremap crc <Cmd>lua require('jdtls').extract_constant()<CR>
 vnoremap crc <Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>
 vnoremap crm <Esc><Cmd>lua require('jdtls').extract_method(true)<CR>
-nnoremap <silent> ca <cmd>lua vim.lsp.buf.code_action()<CR> 
-nnoremap <silent> ty <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <leader>ca <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap <leader>ty <cmd>lua vim.lsp.buf.hover()<CR>
 
 " NERDTree Settings
 
@@ -98,15 +112,15 @@ let g:WebDevIconsDefaultFolderSymbolColor = "EE6E73"
 let g:NERDTreeExtensionHighlightColor = {}
 
 function! ToggleOrFocusNERDTree()
-	if exists("g:NERDTree") && g:NERDTree.IsOpen()
-		if bufname('%') =~ 'NERD_tree'
-			execute "NERDTreeClose"
-		else
-			execute "NERDTreeFocus"
-		endif
-	else
-		execute "NERDTreeToggle"
-	endif
+    if exists("g:NERDTree") && g:NERDTree.IsOpen()
+        if bufname('%') =~ 'NERD_tree'
+            execute "NERDTreeClose"
+        else
+            execute "NERDTreeFocus"
+        endif
+    else
+        execute "NERDTreeToggle"
+    endif
 endfunction
 
 nmap <C-f> :call ToggleOrFocusNERDTree()<CR>
@@ -116,42 +130,79 @@ augroup set_html_filetype
   autocmd BufReadPost,BufNewFile *.html set filetype=html
 augroup END
 
+augroup set_prolog_filetype
+    autocmd!
+    autocmd BufReadPost,BufNewFile *.pl set filetype=prolog
+augroup END
+
+augroup fix_php_indent
+    autocmd!
+    autocmd FileType php setlocal indentexpr=
+    autocmd FileType php setlocal autoindent
+    autocmd FileType php setlocal smartindent
+augroup END
+
 lua << EOF
-require('kanagawa').setup({
-    compile = false,             -- enable compiling the colorscheme
-    undercurl = true,            -- enable undercurls
-    commentStyle = { italic = true },
-    functionStyle = {},
-    keywordStyle = { italic = true},
-    statementStyle = { bold = true },
-    typeStyle = {},
-    transparent = true,         -- do not set background color
-    dimInactive = false,         -- dim inactive window `:h hl-NormalNC`
-    terminalColors = true,       -- define vim.g.terminal_color_{0,17}
-    colors = {                   -- add/modify theme and palette colors
-        palette = {},
-        theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
+
+-- Default options
+require('nightfox').setup({
+  options = {
+    -- Compiled file's destination location
+    compile_path = vim.fn.stdpath("cache") .. "/nightfox",
+    compile_file_suffix = "_compiled", -- Compiled file suffix
+    transparent = true,     -- Disable setting background
+    terminal_colors = true,  -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
+    dim_inactive = false,    -- Non focused panes set to alternative background
+    module_default = true,   -- Default enable value for modules
+    colorblind = {
+      enable = false,        -- Enable colorblind support
+      simulate_only = false, -- Only show simulated colorblind colors and not diff shifted
+      severity = {
+        protan = 0,          -- Severity [0,1] for protan (red)
+        deutan = 0,          -- Severity [0,1] for deutan (green)
+        tritan = 0,          -- Severity [0,1] for tritan (blue)
+      },
     },
-    overrides = function(colors) -- add/modify highlights
-        return {
-        }    
-    end,
-    theme = "wave",              -- Load "wave" theme when 'background' option is not set
-    background = {               -- map the value of 'background' option to a theme
-        dark = "wave",           -- try "dragon" !
-        light = "lotus"
+    styles = {               -- Style to be applied to different syntax groups
+      comments = "NONE",     -- Value is any valid attr-list value `:help attr-list`
+      conditionals = "NONE",
+      constants = "NONE",
+      functions = "NONE",
+      keywords = "NONE",
+      numbers = "NONE",
+      operators = "NONE",
+      strings = "NONE",
+      types = "NONE",
+      variables = "NONE",
     },
+    inverse = {             -- Inverse highlight for different types
+      match_paren = false,
+      visual = false,
+      search = false,
+    },
+    modules = {             -- List of various plugins and additional options
+      -- ...
+    },
+  },
+  palettes = {},
+  specs = {},
+  groups = {},
 })
-vim.cmd("colorscheme kanagawa");
+
+-- setup must be called before loading
+vim.cmd("colorscheme duskfox")
+
 vim.cmd(":highlight MatchParen cterm=underline ctermbg=black ctermfg=NONE")
 vim.cmd(":highlight MatchParen gui=underline guibg=black guifg=NONE")
+vim.cmd(":highlight CurSearch ctermfg=LightBlue guifg=#a3be8c guibg=#363943")
+
 
 require('mason').setup();
 
 -- TreeSitter Settings
 
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "java", "lua", "python", "html", "javascript", "typescript", "cpp", "css"},
+  ensure_installed = { "c", "cpp", "java", "lua", "python", "html", "javascript", "typescript", "css", "php", "clojure"},
 
   sync_install = false,
 
@@ -159,14 +210,16 @@ require'nvim-treesitter.configs'.setup {
 
   highlight = {
     enable = true,
+    additional_vim_regex_highlighting = true,
   },
 
   indent = {
-    enable = false    
+    enable = false
   }
 }
 
 require("nvim-autopairs").setup {}
+require("nvim-autopairs").get_rules("'")[1].not_filetypes = { "clojure" }
 
 -- nvim-comp setup
  -- Set up nvim-cmp.
@@ -180,8 +233,8 @@ require("nvim-autopairs").setup {}
       end,
     },
     window = {
-      -- completion = cmp.config.window.bordered(),
-      -- documentation = cmp.config.window.bordered(),
+      -- completion:
+      documentation = cmp.config.window.bordered(),
     },
     mapping = cmp.mapping.preset.insert({
       ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -210,7 +263,7 @@ require("nvim-autopairs").setup {}
       { name = 'buffer' },
     })
  })
- require("cmp_git").setup() ]]-- 
+ require("cmp_git").setup() ]]--
 
   -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline({ '/', '?' }, {
@@ -242,10 +295,21 @@ require("nvim-autopairs").setup {}
       filetypes = {"html",}
   }
   require("lspconfig").cssls.setup{}
-  require("lspconfig").tsserver.setup{
-  }
   require("lspconfig").clangd.setup{}
   require("lspconfig").eslint.setup{}
+  require("lspconfig").lua_ls.setup{}
+  require("lspconfig").phpactor.setup({
+    root_dir = function ()
+        return vim.loop.cwd()
+    end,
+  })
+  require("lspconfig").clojure_lsp.setup{
+      cmd = { "/home/viktor/.local/share/nvim/mason/bin/clojure-lsp" },
+      filetypes = { "clojure", "edn" },
+      root_dir = function ()
+        return vim.loop.cwd()
+      end,
+  }
 
   -- nvim-lint setup
   require('lint').linters_by_ft = {
